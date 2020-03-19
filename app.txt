@@ -1,0 +1,122 @@
+info:
+  application:
+    name: gateway-service
+    component: gateway-service
+    description: gateway-service for Back Services
+    version: 2.0.0-Release-reset-2
+    version-date: 2020-01-08
+    version-maker: Gordeev A.
+
+#SSL
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store-type: JKS
+    key-store: /opt/java/openjdk/jre/lib/security/server.keystore
+    key-store-password: P@ssw0rd
+    key-alias: docker-cd.test.kv.aval
+    key-password: P@ssw0rd
+    key-store-provider: SUN
+
+    trust-store: /opt/java/openjdk/jre/lib/security/server.keystore
+    trust-store-provider: SUN
+    trust-store-password: P@ssw0rd
+    trust-store-type: JKS
+
+
+
+# The path to the keystore containing the certificate - src/main/resources
+#server.ssl.key-store=/opt/java/openjdk/jre/lib/security/server.keystore
+#    key-store: classpath:server.keystore
+
+
+#Setting the logging levels for the service
+logging:
+  level:
+    com.netflix: TRACE
+    org.springframework.web: TRACE
+    org.springframework.security: TRACE
+    org.*: DEBUG
+    ua.*: DEBUG
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: cmd-service
+          uri: http://cmd-service:8089
+          predicates:
+            - Path=/api/cmd-service/**
+          filters:
+            - StripPrefix=2
+            - SwaggerFilter=true
+
+        - id: product-catalog-service
+          uri: http://product-catalog-service:8090
+          predicates:
+            - Path=/api/product-catalog-service/**
+          filters:
+            - StripPrefix=2
+            - SwaggerFilter=true
+
+        - id: broker
+          uri: https://lucky2.test.kv.aval:7845
+          predicates:
+            - Path=/api/broker/**
+          filters:
+            - StripPrefix=2
+            - SwaggerFilter=true
+
+        - id: lucky-cmd
+          uri: https://lucky2.test.kv.aval:7845
+          predicates:
+            - Path=/api/lucky-cmd/**
+          filters:
+            - StripPrefix=2
+            - SwaggerFilter=true
+
+        - id: iscard-service
+          uri: http://iscard-service:8072
+          predicates:
+            - Path=/api/iscard-service/**
+          filters:
+            - StripPrefix=2
+            - SwaggerFilter=true
+
+        - id: bmrs-service
+          uri: http://bmrs-service:8071
+          predicates:
+            - Path=/api/bmrs-service/**
+          filters:
+            - StripPrefix=2
+            - SwaggerFilter=true
+
+        - id: printing-service
+          uri: http://printing-service:8073
+          predicates:
+            - Path=/api/printing-service/**
+          filters:
+            - StripPrefix=2
+            - SwaggerFilter=true
+
+        - id: kerberos-auth-service
+          uri: http://kerberos-auth-service:8091
+          predicates:
+            - Path=/api/kerberos-auth-service/**
+          filters:
+            - StripPrefix=2
+            - SwaggerFilter=true
+
+        - id: camunda
+          uri: http://camunda.test.kv.aval:8080
+          predicates:
+            - Path=/api/camunda/**
+          filters:
+            - StripPrefix=2
+            - SwaggerFilter=true
+
+#
+swagger.enableTryItOut: true
+jwt.signing.key: "cards-frontend"
